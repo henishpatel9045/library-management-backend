@@ -1,13 +1,20 @@
+from urllib import request
 from django.contrib import admin
 
 from django.db import transaction
 from .models import Librarian
 from . import models, forms
-from django.contrib.auth import get_user_model
+
+from django.contrib.auth import get_user_model, models as auth_models
 
 User = get_user_model()
+admin.site.site_header = "Library Management System"
+admin.site.index_title = "Dashboard"
+
 # Register your models here.
-class UserAdmin(admin.ModelAdmin):    
+class UserAdmin(admin.ModelAdmin):   
+    exclude = ['is_new'] 
+
     def get_form(self, req, obj, **kwargs):
         form = super().get_form(req, obj, **kwargs)
         try:
@@ -15,7 +22,8 @@ class UserAdmin(admin.ModelAdmin):
             form.base_fields['last_name'].initial = obj.user.last_name
             form.base_fields['email'].initial = obj.user.email        
             form.base_fields.get('user').widget.attrs['readonly'] = True
-            form.base_fields['user'].queryset = User.objects.filter(pk=obj.user.pk)
+            print(request.user.is_superuser)
+            form.base_fields['user'].queryset = User.objects.exclude(is_superuser=True).filter(pk=obj.user.pk)
             return form
         except Exception as e:
             return form
@@ -23,7 +31,8 @@ class UserAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         res = super().get_queryset(request)
         user = request.user
-        if Librarian.objects.filter(user=user).exists():
+
+        if Librarian.objects.filter(user=user).exists() or request.user.is_superuser:
             return res
         else:
             return res.filter(user=user)
@@ -41,10 +50,6 @@ class UserAdmin(admin.ModelAdmin):
 class MemberAdmin(UserAdmin):
     list_display = ['id']
     form = forms.MemberForm
-    
-    def get_readonly_fields(self, request,obj=None):
-        res = ['phone_number', 'aadhaar_card_id', 'date_of_birth', 'address', 'pin_code', 'currently_borrowed_books_count', 'pending_charge']
-        return res      
 
 @admin.register(models.Librarian)
 class LibrarianAdmin(UserAdmin):
@@ -52,6 +57,11 @@ class LibrarianAdmin(UserAdmin):
     form = forms.LibrarianForm
     
     def get_queryset(self, request):
-        return super().get_queryset(request).filter(user=request.user)
+        return (super()
+                .get_queryset(request)
+                .filter(user=request.user) 
+                if not request.user.is_superuser
+                else super().get_queryset(request))
+
     
     
