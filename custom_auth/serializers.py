@@ -29,7 +29,6 @@ class SignUpSerializer(serializers.Serializer):
         with transaction.atomic():
             user = UserSerializer(data=validated_data)
             user.is_valid(raise_exception=True)
-
             validated_data['user'] = user.create(validated_data).pk
             if choice == 'Member':
                 member = MemberSerializer(data=validated_data)
@@ -40,20 +39,38 @@ class SignUpSerializer(serializers.Serializer):
                 librarien.is_valid(raise_exception=True)
                 validated_data['id'] = librarien.create(validated_data).user.pk
             return validated_data
-
+    
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name')
-
+    
+    def update(self, instance, validated_data):
+        user = User.objects.update(username=validated_data.get("username", instance.username), 
+                                   password=validated_data.get("password", instance.password),
+                                   email=validated_data.get("email", instance.email),
+                                   first_name=validated_data.get("first_name", instance.first_name),
+                                   last_name=validated_data.get("last_name", instance.last_name))
+        return user 
+    
     def create(self, validated_data):
         validated_data = {'username': validated_data.get('username'), 'email': validated_data.get('email'), 'password': validated_data.get('password'), 'first_name': validated_data.get('first_name'), 'last_name': validated_data.get('last_name')}
         return User.objects.create_user(**validated_data)
+
 
 class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = ('id', 'user', 'phone_number', 'address', 'pin_code', 'aadhaar_card_id', 'date_of_birth')
+    
+    def run_validation(self, data):
+        try:
+            librarian = Librarian.objects.filter(user=self.context.user)
+            if not librarian.exists():
+                self.get_fields().get("user").queryset = User.objects.filter(pk=self.context.user.pk)
+        except AttributeError as e:
+            pass
+        return super().run_validation(data)
     
     def create(self, validated_data):
         validated_data['user'] = User.objects.get(pk=validated_data.get('user'))
@@ -64,7 +81,7 @@ class LibrarianSerializer(serializers.ModelSerializer):
     class Meta:
         model = Librarian
         fields = ('id', 'user', 'phone_number', 'address', 'pin_code')
-        
+    
     def create(self, validated_data):
         validated_data['user'] = User.objects.get(pk=validated_data.get("user"))
         validated_data = {key: validated_data.get(key) for key in ['user', 'phone_number', 'address', 'pin_code']} 
