@@ -5,11 +5,31 @@ from django.db import transaction
 from .models import Librarian
 from . import models, forms
 
-from django.contrib.auth import get_user_model, models as auth_models
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth import get_user_model
+
+from library.utils import (
+    has_full_access,
+)
 
 User = get_user_model()
 admin.site.site_header = "Library Management System"
 admin.site.index_title = "Dashboard"
+admin.site.unregister(User)
+
+@admin.register(User)
+class DjangoUserAdmin(BaseUserAdmin):
+    fieldsets = (
+        (None, {"fields": ("username", "password")}),
+        (("Personal info"), {"fields": ("first_name", "last_name", "email")}),
+    )
+    
+    def get_queryset(self, request):
+        if has_full_access(request.user):
+            return super().get_queryset(request)
+        else:
+            return super().get_queryset(request).filter(pk=request.user.pk)
+
 
 # Register your models here.
 class UserAdmin(admin.ModelAdmin):   
@@ -22,7 +42,6 @@ class UserAdmin(admin.ModelAdmin):
             form.base_fields['last_name'].initial = obj.user.last_name
             form.base_fields['email'].initial = obj.user.email        
             form.base_fields.get('user').widget.attrs['readonly'] = True
-            print(request.user.is_superuser)
             form.base_fields['user'].queryset = User.objects.exclude(is_superuser=True).filter(pk=obj.user.pk)
             return form
         except Exception as e:
@@ -32,7 +51,7 @@ class UserAdmin(admin.ModelAdmin):
         res = super().get_queryset(request)
         user = request.user
 
-        if Librarian.objects.filter(user=user).exists() or request.user.is_superuser:
+        if has_full_access(user):
             return res
         else:
             return res.filter(user=user)
