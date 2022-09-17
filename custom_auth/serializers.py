@@ -1,6 +1,8 @@
+from library.utils import is_librarian
 from rest_framework import serializers
-from .models import *
-from library.utils import has_full_access, is_librarian
+
+from custom_auth.models import *
+
 
 class SignUpSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField(default=None)

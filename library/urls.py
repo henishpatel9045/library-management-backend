@@ -1,5 +1,6 @@
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
-from .views import *
+
+from library.views import *
 
 router = DefaultRouter()
 router.register("category", CategoryViewSet, basename="Endpoint for category of books.")

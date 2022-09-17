@@ -1,7 +1,8 @@
+import os
 from datetime import timedelta
 from pathlib import Path
-import os
-from  library_management.settings.db_select import DATABASE_CONFIG, BASE_DIR
+
+from library_management.settings.db_select import BASE_DIR, DATABASE_CONFIG
 
 # SECURITY WARNING: don't run with debug turned on in production!
 

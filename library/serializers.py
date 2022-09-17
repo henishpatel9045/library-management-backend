@@ -1,7 +1,9 @@
-from rest_framework import serializers
-from .models import *
 from custom_auth import models
-from .utils import has_full_access, is_librarian
+from rest_framework import serializers
+
+from library.models import *
+from library.utils import is_librarian
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

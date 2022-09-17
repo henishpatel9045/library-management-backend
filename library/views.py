@@ -1,11 +1,12 @@
-from datetime import date
-from datetime import date
-from rest_framework import viewsets, mixins, status, permissions
-from rest_framework.response import Response
-from .models import *
-from .serializers import *
-from .utils import has_full_access, is_librarian
 import os
+from datetime import date
+
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.response import Response
+
+from library.models import *
+from library.serializers import *
+from library.utils import has_full_access, is_librarian
 
 LATE_FINE_PER_DAY = os.environ.get("LATE_FINE_PER_DAY", 2)
 

@@ -4,3 +4,5 @@ WORKDIR /library_management
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 COPY . /library_management/
+RUN python3 manage.py makemigrations
+RUN python3 manage.py migrate

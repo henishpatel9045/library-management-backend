@@ -1,9 +1,10 @@
-from rest_framework import status, viewsets, mixins, permissions
-from rest_framework.response import Response
-from .serializers import *
-from .models import *
-from library.utils import has_full_access, is_librarian
 from django.contrib.auth import get_user_model
+from library.utils import has_full_access, is_librarian
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.response import Response
+
+from custom_auth.models import *
+from custom_auth.serializers import *
 
 # Create your views here.
 

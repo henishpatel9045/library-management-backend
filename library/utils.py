@@ -1,4 +1,3 @@
-from .models import *
 from custom_auth.models import Librarian
 
 def is_librarian(user):

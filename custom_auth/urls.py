@@ -1,12 +1,9 @@
-from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
-from .views import MeViewSet, SignUpViewSet, LibrarienViewSet, MemberViewSet
-from rest_framework_simplejwt import views
 from django.urls import path
 from library.views import BorrowByUserViewSet
-from rest_framework_nested.routers import DefaultRouter
-from .views import SignUpViewSet, LibrarienViewSet, MemberViewSet
+from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 from rest_framework_simplejwt import views
-from django.urls import path
+
+from custom_auth.views import LibrarienViewSet, MemberViewSet, MeViewSet, SignUpViewSet
 
 router = DefaultRouter()
 router.register("register", SignUpViewSet, basename="register")

@@ -153,4 +153,76 @@ class TestLibrarien:
         res = client.get("/auth/librarien/")
         assert res.status_code == status.HTTP_200_OK
         assert len(res.data) == 1
-                
+
+@pytest.mark.django_db
+class TestCurrentUser:
+    def test_current_user_retrieved_without_credentials_return_401(self):
+        client = APIClient()
+        req_body = {
+            "username": rand_username(),
+            **member_body
+        }
+        res = client.post("/auth/register/", req_body)        
+        res = client.get("/auth/me/")
+        assert res.status_code == status.HTTP_401_UNAUTHORIZED
+        
+    def test_current_user_retrieved_with_credentials_return_200(self):
+        client = APIClient()
+        req_body = {
+            "username": rand_username(),
+            **member_body
+        }
+        client.post("/auth/register/", req_body)
+        access = client.post("/auth/login", {'username': req_body['username'], 'password': req_body['password']})
+        access = access.data['access']
+        client.credentials(HTTP_AUTHORIZATION='JWT ' + access)
+        res = client.get("/auth/me/")
+        assert res.status_code == status.HTTP_200_OK
+       
+    def test_current_user_retrieved_borrowed_books(self):
+        client = APIClient()
+        req_body = {
+            "username": rand_username(),
+            **member_body
+        }
+        client.post("/auth/register/", req_body)
+        access = client.post("/auth/login", {'username': req_body['username'], 'password': req_body['password']})
+        access = access.data['access']
+        client.credentials(HTTP_AUTHORIZATION='JWT ' + access)
+        res = client.get("/auth/me/")
+        assert res.status_code == status.HTTP_200_OK
+        
+        res = client.get(f"/auth/me/{res.data[0].get('id')}/borrowed/")
+        assert res.status_code == status.HTTP_200_OK
+        
+    def test_current_user_retrieved_borrowed_books_with_invalid_id(self):
+        client = APIClient()
+        req_body = {
+            "username": rand_username(),
+            **member_body
+        }
+        client.post("/auth/register/", req_body)
+        access = client.post("/auth/login", {'username': req_body['username'], 'password': req_body['password']})
+        access = access.data['access']
+        client.credentials(HTTP_AUTHORIZATION='JWT ' + access)
+        res = client.get("/auth/me/")
+        assert res.status_code == status.HTTP_200_OK
+        
+        res = client.get(f"/auth/me/6548/borrowed/")
+        assert len(res.data) == 0
+        
+    def test_current_user_delete(self):
+        client = APIClient()
+        req_body = {
+            "username": rand_username(),
+            **member_body
+        }
+        client.post("/auth/register/", req_body)
+        access = client.post("/auth/login", {'username': req_body['username'], 'password': req_body['password']})
+        access = access.data['access']
+        client.credentials(HTTP_AUTHORIZATION='JWT ' + access)
+        res = client.get("/auth/me/")
+        res = client.delete(f"/auth/me/{res.data[0].get('id')}/")
+        assert res.status_code == status.HTTP_204_NO_CONTENT
+        
+        

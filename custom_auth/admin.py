@@ -1,16 +1,10 @@
-from urllib import request
 from django.contrib import admin
-
-from django.db import transaction
-from .models import Librarian
-from . import models, forms
-
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.db import transaction
+from library.utils import has_full_access
 
-from library.utils import (
-    has_full_access,
-)
+from custom_auth import forms, models
 
 User = get_user_model()
 admin.site.site_header = "Library Management System"

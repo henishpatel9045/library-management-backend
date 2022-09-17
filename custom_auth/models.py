@@ -1,7 +1,9 @@
-from django.db import models, transaction
-from django.contrib.auth import get_user_model, models as auth_models
-from django.core.validators import MaxValueValidator
 import os
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth import models as auth_models
+from django.core.validators import MaxValueValidator
+from django.db import models, transaction
 
 MAX_BOOK_AT_A_TIME = os.environ.get("MAX_BOOK_AT_A_TIME", 5)
 
