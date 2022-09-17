@@ -6,7 +6,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "8_e1j-rx5+q=a0prnrq3!4*%fyb+pypn1y4%z
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['library-henish.herokuapp.com']
+ALLOWED_HOSTS = ['library00management.pythonanywhere.com']
 
 DATABASE_CONFIG = {
     'default': dj_database_url.config()
