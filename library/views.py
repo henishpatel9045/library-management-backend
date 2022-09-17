@@ -49,8 +49,6 @@ class BorrowViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     
     def get_serializer_context(self):
         return self.request
-           record = "category"
-
 
 class BookViewSet(LibrarianPermissionViewSet, viewsets.ModelViewSet):
     serializer_class = BookSerializer
