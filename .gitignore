@@ -4,12 +4,12 @@ __pycache__/
 *$py.class
 
 # pipenv
-Pipfile.lock
+Pipfile
+Pipfile.*
 
 # C extensions
 *.so
 
-*/migrations/0*.py
 
 # Distribution / packaging
 .Python

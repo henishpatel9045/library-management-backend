@@ -11,6 +11,10 @@ drf-nested-routers = "*"
 drf-yasg = "*"
 djoser = "*"
 djangorestframework-simplejwt = "*"
+psycopg2 = "*"
+gunicorn = "*"
+whitenoise = "*"
+dj-database-url = "*"
 
 [dev-packages]
 pytest = "*"
