@@ -54,8 +54,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'library_management.wsgi.application'
 
-
-DATABASES = DATABASE_CONFIG
+if not os.environ.get('PROD', False):
+    DATABASES = DATABASE_CONFIG
 
 
 # Password validation
