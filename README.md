@@ -1,59 +1,138 @@
-# Django Interview Assignment
-A django rest framework based web api's application that will be used by our candidates to implement interview assignment.
-
-## Dependencies
-This project relies mainly on Django. Mainly:
-  - Python 3.8+
-  - Django 3+ or 4+
-  - Django Rest Framework
-
-## Requirements:
-  - Candidates expected to implement required features for a library management system based on provided scenario
-  - Candidates have to implement web REST api's for each required action related to scenario
-  - Proper [JWT][1] based authentication should be implemented in each protected web api endpoint
-  - Ensure an user can only perform actions using apis which are allowed to the role assigned to that user
 
 
-### Scenario
-The are two roles in the system; `LIBRARIAN` and `MEMBER`
+# Library Management Backend API
 
-### As a User
-  - I can signup either as `LIBRARIAN` and `MEMBER` using username and password
-  - I can login using username/password and get JWT access token
+## 🛠 Tools Used
+Python, Django, Django-Rest-Framework, drf-nestedrouters, djangorestframework-simplejwt, drf-yasg
 
-#### As a Librarian
-  - I can add, update, and remove Books from the system
-  - I can add, update, view, and remove Member from the system
-  
-#### As a Member
-  - I can view, borrow, and return available Books
-  - Once a book is borrowed, its status will change to `BORROWED`
-  - Once a book is returned, its status will change to `AVAILABLE`
-  - I can delete my own account
 
-## Nice to Have:
-It will be an advantage for candidates to demonstrate the following:
-  - Proper usage of Http Methods and REST practices
-  - Understanding of [SOLID Principle][2]
-  - Understanding of Design patterns
-  - Understanding of TDD and BDD
-  - Each implementation should be equipped with unit tests
-  - Integration tests are require to demonstrate API usages
+## Deployment
+   [Go to website](https://library00management.pythonanywhere.com/)
 
-## **Instructions**
-- [ ] Follow these steps for submission:
-  1. Fork the repository in your github account
-  1. Create issues and work on them in their respective branches
-  1. Complete the tasks while following all instructions
-  1. Create MRs and merge into main branch
-  1. When done, Test if all task requirements are met and instructions followed
-  1. Push code to github
-  1. Deploy/Host your solution
-  1. Reply to the same email with the URLs for **repo**, **hosted API** and **hosted documentation**
-- [ ] `setup_instructions.md` should have all the details and instructions like how to setup and run the project
-- [ ] Repo should not contain irrelevant folders/files like cache files, build/dist directories etc.
-- [ ] Create API documentation using Swagger or similar framework
-- For any queries please email us at [hiring@truevalueaccess.com](mailto:hiring@truevalueaccess.com)
+## Documentation Link
+   [Go to website](https://library00management.pythonanywhere.com/swagger)
 
-[1]: https://jwt.io/introduction
-[2]: https://en.wikipedia.org/wiki/SOLID
+## Run Locally
+
+### With Docker
+```bash
+  docker-compose build
+```
+```bash
+  docker-compose up
+```
+
+### Without Docker
+
+#### Using sqlite as database
+GOTO library_management/settings/db_select.py
+Change USE_POSTGRES=True -> USE_POSTGRES=False
+
+```bash
+  pip install -r requirements.txt
+```
+```bash
+  python manage.py migrate
+```
+```bash
+  python manage.py runserver
+```
+
+#### Test API
+```bash
+  pytest
+```
+
+
+## API Reference
+### New User Regesteration and login
+```http
+  POST /auth/regester/
+```
+```http
+  POST /auth/login
+```
+
+### Add new book whole flow
+
+<li>Only Librarien can add,update,delete book.</li>
+<ol>
+    <li>Get JWT token from /auth/login</li>
+    <li>Add JWT token in request headers, Authorization: JWT {YOUR_TOKEN}</li>
+    <li>Add new book by post method on /book/</li>
+</ol>
+
+
+### Add new member by librarian flow
+
+<ol>
+    <li>Get JWT token from /auth/login</li>
+    <li>Add JWT token in request headers, Authorization: JWT {YOUR_TOKEN}</li>
+    <li>Add new member by post method on /auth/member/</li>
+</ol>
+
+
+### Borrow book flow
+
+<ol>
+    <li>Get JWT token from /auth/login</li>
+    <li>Add JWT token in request headers, Authorization: JWT {YOUR_TOKEN}</li>
+    <li>Get list of books at GET: /book/</li>
+    <li>Borrow book POST: /book/{id}/borrow/</li>
+</ol>
+
+### Return book flow
+
+<ol>
+    <li>Get JWT token from /auth/login</li>
+    <li>Add JWT token in request headers, Authorization: JWT {YOUR_TOKEN}</li>
+    <li>Get list of books borrowed at GET: /auth/me/{id}/borrowed</li>
+    <li>Generate return approval request by POST: /return/</li>
+</ol>
+
+### Approve Return
+Only Librarian can approve return request.
+<ol>
+    <li>Get JWT token from /auth/login</li>
+    <li>Add JWT token in request headers, Authorization: JWT {YOUR_TOKEN}</li>
+    <li>Get list of return approvals at GET: /return</li>
+    <li>Approve return approval request by PUT: /return/{id}</li>
+</ol>
+
+
+### Delete Member by Librarien
+<ol>
+    <li>Get JWT token from /auth/login</li>
+    <li>Add JWT token in request headers, Authorization: JWT {YOUR_TOKEN}</li>
+    <li>Get list of members at GET: /auth/member</li>
+    <li>Delete member by DELETE: /auth/member/{id}</li>
+</ol>
+
+
+
+### Update Member
+<ol>
+    <li>Get JWT token from /auth/login</li>
+    <li>Add JWT token in request headers, Authorization: JWT {YOUR_TOKEN}</li>
+    <li>Get list of members at GET: /auth/member</li>
+    <li>Delete member by PUT: /auth/member/{id}</li>
+</ol>
+
+### Update Librarian
+Only Librarian can update.
+<ol>
+    <li>Get JWT token from /auth/login</li>
+    <li>Add JWT token in request headers, Authorization: JWT {YOUR_TOKEN}</li>
+    <li>Get list of members at GET: /auth/member</li>
+    <li>Delete member by PUT: /auth/member/{id}</li>
+</ol>
+
+
+## Feedback
+
+If you have any feedback, please reach out to us at henishpatel9045@gmail.com
+
+
+## Authors
+
+- [@henishpatel9045](https://www.github.com/henishpatel9045)
