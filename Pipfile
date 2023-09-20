@@ -6,19 +6,10 @@ name = "pypi"
 [packages]
 django = "*"
 djangorestframework = "*"
-django-debug-toolbar = "*"
-drf-nested-routers = "*"
-drf-yasg = "*"
-djoser = "*"
-djangorestframework-simplejwt = "*"
-psycopg2 = "*"
-gunicorn = "*"
-whitenoise = "*"
-dj-database-url = "*"
+pillow = "*"
+django-object-actions = "*"
 
 [dev-packages]
-pytest = "*"
-pytest-django = "*"
 
 [requires]
-python_version = "3.10"
+python_version = "3.11"
